@@ -1,38 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>p5.js Starter Project</title>
-    <style>
-    html,
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drawing Classifier</title>
+  <style>
     body {
-        height: 100%;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
     }
 
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    canvas {
+      z-index: 10;
+      position: relative;
+      border: 2px solid #000;
+      background-color: white;
+      display: block;
+      margin: 0 auto;
     }
-    main {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: flex-end;
+
+    .controls {
+      margin: 15px;
     }
-    </style>
+
+    button {
+      padding: 8px 15px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    #prediction {
+      font-size: 24px;
+      margin: 15px;
+      min-height: 30px;
+    }
+  </style>
 </head>
 <body>
-<main>
-    <div id="sketch"></div>
-    <a href="index.js">souce code</a>
-    </main>
-		<script src="lib/ml5.1.2.1.min.js"></script>
-		<script src="lib/p5.min.js"></script>
-    <!-- <script src="lib/p5.sound.min.js"></script> -->
+  <h1>Drawing Classifier</h1>
+  <p>Draw something in the canvas below and click "Classify Drawing"</p>
 
-    <script src="index.js"></script>
+  <div id="sketch"></div>
+  <div id="buttons"></div>
+  <div id="status">Loading...</div>
+  <div id="label"></div>
+  <div id="confidence"></div>
+
+  <div class="controls">
+    <button id="classifyBtn">Classify Drawing</button>
+    <button id="clearBtn">Clear Canvas</button>
+  </div>
+
+  <div id="prediction"></div>
+
+  <p>Model trained on:
+    <a href="https://teachablemachine.withgoogle.com/models/vgJOFUw4O/">Teachable Machine</a>
+  </p>
+
+  <script src="lib/p5.min.js"></script>
+  <script src="lib/ml5.1.2.1.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
