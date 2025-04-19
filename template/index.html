@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5.js Drawing</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      text-align: center;
+      font-family: Arial;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    #game-container {
+      max-width: 600px;
+      position: relative;
+    }
+    #timer {
+      font-size: 24px;
+      color: #ff5555;
+      margin: 10px;
+    }
+    #story {
+      margin-bottom: 20px;
+      min-height: 100px;
+    }
+    #story h1, #story p {
+      text-align: center;
+    }
+    #displayTextContainer {
+      font-size: 24px;
+      color: white;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    #clearBtn {
+      background: #ff0000;
+    }
+    .instructions {
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+    #sketch-holder {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="story">
+      <h1>The Dragon's Cave</h1>
+      <p>You enter a dark cave and stumble upon an angry dragon! Quick, draw your action:</p>
+    </div>
+    <div id="timer">Time left: 15s</div>
+    <div id="displayTextContainer"></div>
+    <div id="sketch-holder"></div>
+    <div class="instructions">
+      <p>Draw:  Sword (vertical line) |  Shield (circle) |  Wand (star)</p>
+    </div>
+    <button id="clearBtn">Clear Drawing</button>
+    <button id="submitBtn">Submit Drawing</button>
+  </div>
+  <script src="index.js"></script>
+</body>
+</html>
