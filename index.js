@@ -4,7 +4,7 @@ const CONFIG = {
   lineWidth: 8,
   lineColor: '#333333', // Dark gray for lines
   bgColor: '#f0f0f0', // Light gray for background
-  doodleSize: 200 // Added doodleSize to config
+  doodleSize: 400 // Added doodleSize to config
 };
 
 // Game Variables
@@ -20,6 +20,7 @@ let clearButton;
 let dragonDefeated = false;
 let canvasX, canvasY; // Canvas position
 let showClassifiedImage = false; // Flag to show classified image
+let gameState = 'start'; // 'start' or 'main'
 
 // Modern Color Palette (Dragon Cave Theme)
 const primaryColor = '#8B4513'; // Saddle Brown (earthy)
@@ -44,13 +45,87 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(800, 600);
-  canvas.parent('sketch-holder');
-  background(backgroundColor);
+  const canvasWidth = 800; // Set the desired width
+  const canvasHeight = 600; // Set the desired height
+  let canvas = createCanvas(canvasWidth, canvasHeight);
+  canvas.parent('sketch-holder'); // Attach the canvas to the #sketch-holder div
 
-  doodleCanvas = createGraphics(200, 200);
+  if (gameState === 'start') {
+    showStartScreen();
+  } else {
+    initializeMainGame();
+  }
+}
+
+function draw() {
+  if (gameState === 'start') {
+    // Start screen is static, no need to redraw
+  } else if (gameState === 'main') {
+    background(backgroundColor);
+    if (showClassifiedImage && currentImage) {
+      // Display the classified image, filling the sketch-holder
+      image(currentImage, canvasX, canvasY, CONFIG.doodleSize, CONFIG.doodleSize);
+      textSize(20);
+      fill(textColor);
+      textAlign(CENTER);
+      text(resultLabel, width / 2, canvasY + CONFIG.doodleSize + 30);
+    } else {
+      // Draw the doodleCanvas in the center
+      image(doodleCanvas, canvasX, canvasY);
+
+      textSize(20);
+      fill(textColor);
+      textAlign(CENTER);
+      text(resultLabel, width / 2, canvasY + CONFIG.doodleSize + 30);
+    }
+
+    if (drawing) {
+      doodleCanvas.strokeWeight(CONFIG.lineWidth);
+      doodleCanvas.stroke(CONFIG.lineColor);
+      doodleCanvas.line(previousX, previousY, mouseX - canvasX, mouseY - canvasY);
+    }
+    previousX = mouseX - canvasX;
+    previousY = mouseY - canvasY;
+  }
+}
+
+function showStartScreen() {
+  background(50); // Dark background for the start screen
+  fill(255);
+  textAlign(CENTER, CENTER);
+  textSize(24);
+  text("Welcome to Doodle Defender!", width / 2, height / 3);
+  textSize(16);
+  text(
+    "The dragon is attacking! Draw shapes to defend your kingdom.\n" +
+    "Click 'Accept' to begin your adventure.",
+    width / 2,
+    height / 2
+  );
+
+  // Create Accept button and place it in the game container
+  const acceptBtn = createButton('Accept');
+  acceptBtn.parent('game-container'); // Place it inside the flex container
+  acceptBtn.mousePressed(() => {
+    gameState = 'main';
+    acceptBtn.remove(); // Remove the accept button
+    
+    // Show the main game UI elements
+    document.getElementById('game-title').style.display = 'block';
+    document.getElementById('result-label').style.display = 'block';
+
+    initializeMainGame(); // Setup the main game
+  });
+}
+
+function initializeMainGame() {
+  background(255); // Reset the background for the main game
+
+  // Update the size of the doodleCanvas
+  const doodleCanvasWidth = 400; // New width for the doodle canvas
+  const doodleCanvasHeight = 400; // New height for the doodle canvas
+  doodleCanvas = createGraphics(doodleCanvasWidth, doodleCanvasHeight);
   doodleCanvas.background(CONFIG.bgColor);
-  
 
   // Calculate the center position
   canvasX = (width - CONFIG.doodleSize) / 2;
@@ -61,7 +136,6 @@ function setup() {
   classifyBtn.id('classifyBtn'); // Add an ID to the button
   classifyBtn.mousePressed(classifyDrawing);
   styleButton(classifyBtn, secondaryColor);
-
 
   // Create Clear button
   clearBtn = createButton('try again');
@@ -76,37 +150,8 @@ function setup() {
   buttonContainer.parent('game-container');
 }
 
-function draw() {
-  background(backgroundColor);
-  if (showClassifiedImage && currentImage) {
-    // Display the classified image, filling the sketch-holder
-    image(currentImage, canvasX, canvasY, CONFIG.doodleSize, CONFIG.doodleSize);textSize(20);
-    fill(textColor);
-    textAlign(CENTER);
-    text(resultLabel, width / 2, canvasY + CONFIG.doodleSize + 30);
-  
-  } else {
-    // Draw the doodleCanvas in the center
-    image(doodleCanvas, canvasX, canvasY);
-
-    textSize(20);
-    fill(textColor);
-    textAlign(CENTER);
-    text(resultLabel, width / 2, canvasY + CONFIG.doodleSize + 30);
-  }
-
- 
-  if (drawing) {
-    doodleCanvas.strokeWeight(CONFIG.lineWidth);
-    doodleCanvas.stroke(CONFIG.lineColor);
-    doodleCanvas.line(previousX, previousY, mouseX - canvasX, mouseY - canvasY);
-  }
-  previousX = mouseX - canvasX;
-  previousY = mouseY - canvasY;
-}
-
 function mousePressed() {
-  if (mouseX > canvasX && mouseX < canvasX + 200 && mouseY > canvasY && mouseY < canvasY + 200) {
+  if (gameState === 'main' && mouseX > canvasX && mouseX < canvasX + 200 && mouseY > canvasY && mouseY < canvasY + 200) {
     drawing = true;
     previousX = mouseX - canvasX;
     previousY = mouseY - canvasY;
@@ -169,10 +214,36 @@ function styleButton(button, bgColor) {
    // Add some margin
 }
 
+// This function is called automatically by p5.js when the mouse is dragged
 function mouseDragged() {
-  if (drawing) {
-    doodleCanvas.strokeWeight(CONFIG.lineWidth);
-    doodleCanvas.stroke(CONFIG.lineColor);
-    doodleCanvas.line(previousX, previousY, mouseX - canvasX, mouseY - canvasY);
+  // Call the drawing logic only during the main game state
+  if (gameState === 'main') {
+    drawOnDoodleCanvas();
+  }
+}
+
+// This function is called automatically by p5.js for touch events
+function touchMoved() {
+  // Call the drawing logic only during the main game state
+  if (gameState === 'main') {
+    drawOnDoodleCanvas();
+    // Prevent the browser from performing default actions like scrolling
+    return false;
+  }
+}
+
+// A helper function to contain the drawing logic, used by both mouse and touch
+function drawOnDoodleCanvas() {
+  // Check if the pointer is within the bounds of the smaller doodleCanvas
+  if (mouseX > canvasX && mouseX < canvasX + doodleCanvas.width &&
+      mouseY > canvasY && mouseY < canvasY + doodleCanvas.height) {
+    
+    // Set drawing properties on the doodleCanvas
+    doodleCanvas.stroke(CONFIG.strokeColor || 0); // Default to black
+    doodleCanvas.strokeWeight(CONFIG.strokeWeight || 10); // Default to 10
+    
+    // Draw a line from the previous to the current pointer position
+    // We subtract canvasX and canvasY to get coordinates relative to the doodleCanvas
+    doodleCanvas.line(pmouseX - canvasX, pmouseY - canvasY, mouseX - canvasX, mouseY - canvasY);
   }
 }

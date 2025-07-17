@@ -30,10 +30,13 @@
 
     #sketch-holder {
       margin: 20px 0;
+      
     }
 
     canvas {
       border: 2px solid #8B4513;
+      display: block;
+      margin: 0 auto;
     }
 
     .button-container {
@@ -102,9 +105,10 @@
 </head>
 <body>
   <div id="game-container">
-    <h1>Doodle Defender</h1>
-    <p id="result-label">Draw a circle, line or star to defend against the dragon!</p>
+    <h1 id="game-title" style="display: none;">Doodle Defender</h1>
+    <p id="result-label" style="display: none;">Draw a circle, line or star to defend against the dragon!</p>
     <div id="sketch-holder"></div>
+    <!-- Buttons will be added here by p5.js -->
     <a id="backlink" href="https://rundgang2025.qawsed.site">Back to the Rundgang 2025</a>
   </div>
   <script src="index.js"></script>
